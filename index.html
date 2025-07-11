@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>卡通风十二星座抽奖转盘</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(#ffe4e1, #fff);
+    }
+    #wheel {
+      position: relative;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      border: 8px dashed #ff69b4;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+      background-color: #fff0f5;
+    }
+    .segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      left: 50%;
+      top: 50%;
+      transform-origin: 0% 0%;
+      border: 1px solid #fff;
+    }
+    .label {
+      position: absolute;
+      left: 60%;
+      top: 5%;
+      transform: rotate(30deg);
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      line-height: 1.2;
+    }
+    #pointer {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 30px solid #ff1493;
+      position: absolute;
+      top: 20px;
+    }
+    #spinBtn {
+      margin-top: 40px;
+      padding: 10px 30px;
+      font-size: 20px;
+      cursor: pointer;
+      background: #ff69b4;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    }
+    #spinBtn:hover {
+      background: #ff1493;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #d63384;
+    }
+  </style>
+</head>
+<body>
+  <div id="pointer"></div>
+  <div id="wheel"></div>
+  <button id="spinBtn">🎉 开始抽奖 🎉</button>
+  <div id="result"></div>
+
+  <script>
+    const zodiac = [
+      "白羊座 🐏", "金牛座 🐂", "双子座 👯", "巨蟹座 🦀", "狮子座 🦁", "处女座 🌼",
+      "天秤座 ⚖️", "天蝎座 🦂", "射手座 🏹", "摩羯座 🐐", "水瓶座 💧", "双鱼座 🐟"
+    ];
+    const colors = [
+      "#fbc4ab", "#fcd5ce", "#fae1dd", "#f8edeb", "#e8e8e4", "#d8e2dc",
+      "#ece4db", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff"
+    ];
+
+    const wheel = document.getElementById("wheel");
+
+    for (let i = 0; i < 12; i++) {
+      const segment = document.createElement("div");
+      segment.className = "segment";
+      segment.style.backgroundColor = colors[i];
+      segment.style.transform = `rotate(${i * 30}deg) skewY(-60deg)`;
+
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = zodiac[i];
+      label.style.transform = `rotate(30deg)`;
+
+      segment.appendChild(label);
+      wheel.appendChild(segment);
+    }
+
+    let deg = 0;
+    document.getElementById("spinBtn").addEventListener("click", () => {
+      const randomDeg = Math.floor(Math.random() * 360) + 3600;
+      deg += randomDeg;
+      wheel.style.transform = `rotate(${deg}deg)`;
+
+      setTimeout(() => {
+        const normalizedDeg = deg % 360;
+        const index = Math.floor(((360 - normalizedDeg + 15) % 360) / 30);
+        document.getElementById("result").textContent = `🎯 抽中了：${zodiac[index]}！`;
+      }, 4200);
+    });
+  </script>
+</body>
+</html>
