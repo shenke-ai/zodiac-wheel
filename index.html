@@ -141,13 +141,14 @@
   spinBtn.addEventListener("click", () => {
     spinBtn.disabled = true;
     result.textContent = "";
-    const spins = Math.floor(Math.random() * 360) + 3600;
+    const spins = Math.floor(Math.random() * 360) + 3600; // 最少10圈
     deg += spins;
     wheel.style.transition = "transform 4s cubic-bezier(0.33, 1, 0.68, 1)";
     wheel.style.transform = `rotate(${deg}deg)`;
 
     setTimeout(() => {
       spinBtn.disabled = false;
+      // 修正中奖索引，确保和指针对齐
       const normalizedDeg = deg % 360;
       const index = Math.floor(((360 - normalizedDeg + segmentAngle / 2) % 360) / segmentAngle);
       result.textContent = `🎯 抽中了：${zodiac[index]}！`;
