@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>答案之书 - 哲理转盘</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #2c3e50, #4ca1af);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: "Georgia", serif;
+    color: #f0f0f0;
+    user-select: none;
+  }
+  #container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+  }
+  #wheel {
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    border: 12px solid #2980b9;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    overflow: hidden;
+    position: relative;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 0 100% 0 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 15px;
+    box-sizing: border-box;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #f0f0f0;
+  }
+  .segment:nth-child(odd) {
+    background: rgba(255,255,255,0.15);
+  }
+  #pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 30px solid #ffcc00;
+    filter: drop-shadow(0 0 4px #fff3a6);
+  }
+  #spinBtn {
+    margin-top: 30px;
+    padding: 14px 48px;
+    font-size: 20px;
+    border: none;
+    border-radius: 12px;
+    background: #f39c12;
+    color: #222;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(243,156,18,0.7);
+    transition: background 0.3s ease;
+  }
+  #spinBtn:hover {
+    background: #d68910;
+  }
+  #result {
+    margin-top: 25px;
+    font-size: 22px;
+    min-height: 50px;
+    color: #fff9db;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px #000;
+    max-width: 400px;
+    text-align: center;
+    padding: 0 10px;
+  }
+  .highlight {
+    color: #ffd700;
+    font-weight: bolder;
+    text-shadow: 0 0 8px #ffd700;
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <div id="pointer"></div>
+  <div id="wheel"></div>
+</div>
+<button id="spinBtn">转动答案之书</button>
+<div id="result">点击按钮，转动转盘揭晓你的哲理答案。</div>
+
+<script>
+  const answers = [
+    "最黑暗的时刻，正是黎明的前奏。",
+    "改变自己，是解决问题的开始。",
+    "每一个不曾起舞的日子，都是对生命的辜负。",
+    "真正的智慧，是知道自己无知。",
+    "心若没有栖息的地方，到哪里都是流浪。",
+    "成长就是不断地放下过去的自己。",
+    "人生没有如果，只有结果和后果。",
+    "逆境是人生的磨刀石，能让你更锋利。",
+    "沉默有时是最好的回答。",
+    "学会等待，是一种智慧，也是一种力量。",
+    "走自己的路，让别人说去吧。",
+    "平凡之中蕴藏着伟大。"
+  ];
+
+  const wheel = document.getElementById("wheel");
+  const spinBtn = document.getElementById("spinBtn");
+  const result = document.getElementById("result");
+
+  const segmentCount = answers.length;
+  const segmentAngle = 360 / segmentCount;
+
+  // 创建转盘扇区
+  answers.forEach((text, i) => {
+    const seg = document.createElement("div");
+    seg.className = "segment";
+    seg.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
+    seg.textContent = text;
+    wheel.appendChild(seg);
+  });
+
+  let deg = 0;
+  spinBtn.addEventListener("click", () => {
+    spinBtn.disabled = true;
+    result.textContent = "转盘正在转动，请稍候...";
+    // 随机选一个目标扇区
+    const targetIndex = Math.floor(Math.random() * segmentCount);
+    // 计算转动角度（多转几圈，再停在目标扇区）
+    // 这里转 5~7圈 + 对准目标角度
+    const spins = (Math.floor(Math.random() * 3) + 5) * 360;
+    // 最终旋转角度 = 当前角度 + spins + 目标角度
+    // 目标角度计算成指针上方对齐，即 360 - (targetIndex * segmentAngle + segmentAngle/2)
+    const targetDeg = 360 - (targetIndex * segmentAngle + segmentAngle / 2);
+    deg += spins + targetDeg;
+
+    wheel.style.transition = "transform 5s cubic-bezier(0.33, 1, 0.68, 1)";
+    wheel.style.transform = `rotate(${deg}deg)`;
+
+    // 动画结束处理
+    setTimeout(() => {
+      spinBtn.disabled = false;
+      // 高亮答案扇区
+      const segments = wheel.querySelectorAll(".segment");
+      segments.forEach((seg, i) => {
+        seg.classList.toggle("highlight", i === targetIndex);
+      });
+      result.textContent = `🎯 你的哲理答案是：${answers[targetIndex]}`;
+    }, 5200);
+  });
+</script>
+
+</body>
+</html>
