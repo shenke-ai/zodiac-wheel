@@ -1,130 +1,159 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>卡通风十二星座抽奖转盘</title>
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: linear-gradient(#ffe4e1, #fff);
-    }
-    #wheel {
-      position: relative;
-      width: 400px;
-      height: 400px;
-      border-radius: 50%;
-      border: 8px dashed #ff69b4;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      overflow: hidden;
-      transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
-      background-color: #fff0f5;
-    }
-    .segment {
-      position: absolute;
-      width: 50%;
-      height: 50%;
-      left: 50%;
-      top: 50%;
-      transform-origin: 0% 0%;
-      border: 1px solid #fff;
-    }
-    .label {
-      position: absolute;
-      left: 60%;
-      top: 5%;
-      transform: rotate(30deg);
-      font-size: 20px;
-      font-weight: bold;
-      color: #fff;
-      text-shadow: 1px 1px 2px #000;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      line-height: 1.2;
-    }
-    #pointer {
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 30px solid #ff1493;
-      position: absolute;
-      top: 20px;
-    }
-    #spinBtn {
-      margin-top: 40px;
-      padding: 10px 30px;
-      font-size: 20px;
-      cursor: pointer;
-      background: #ff69b4;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-    }
-    #spinBtn:hover {
-      background: #ff1493;
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #d63384;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>卡通风十二星座抽奖转盘 - SVG版</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(#ffe4e1, #fff);
+  }
+  #wheel {
+    width: 400px;
+    height: 400px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  #pointer {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 30px solid #ff1493;
+    position: relative;
+    top: 10px;
+  }
+  #spinBtn {
+    margin-top: 30px;
+    padding: 12px 36px;
+    font-size: 20px;
+    cursor: pointer;
+    background: #ff69b4;
+    border: none;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  }
+  #spinBtn:hover {
+    background: #ff1493;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #d63384;
+    min-height: 32px;
+    text-align: center;
+  }
+  text {
+    font-size: 16px;
+    fill: white;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 1px 1px 2px #000000aa;
+  }
+</style>
 </head>
 <body>
-  <div id="pointer"></div>
-  <div id="wheel"></div>
-  <button id="spinBtn">🎉 开始抽奖 🎉</button>
-  <div id="result"></div>
 
-  <script>
-    const zodiac = [
-      "白羊座 🐏", "金牛座 🐂", "双子座 👯", "巨蟹座 🦀", "狮子座 🦁", "处女座 🌼",
-      "天秤座 ⚖️", "天蝎座 🦂", "射手座 🏹", "摩羯座 🐐", "水瓶座 💧", "双鱼座 🐟"
-    ];
-    const colors = [
-      "#fbc4ab", "#fcd5ce", "#fae1dd", "#f8edeb", "#e8e8e4", "#d8e2dc",
-      "#ece4db", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff"
-    ];
+<div id="pointer"></div>
+<svg id="wheel" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"></svg>
+<button id="spinBtn">🎉 开始抽奖 🎉</button>
+<div id="result"></div>
 
-    const wheel = document.getElementById("wheel");
+<script>
+  const zodiac = [
+    "白羊座 🐏", "金牛座 🐂", "双子座 👯", "巨蟹座 🦀", "狮子座 🦁", "处女座 🌼",
+    "天秤座 ⚖️", "天蝎座 🦂", "射手座 🏹", "摩羯座 🐐", "水瓶座 💧", "双鱼座 🐟"
+  ];
 
-    for (let i = 0; i < 12; i++) {
-      const segment = document.createElement("div");
-      segment.className = "segment";
-      segment.style.backgroundColor = colors[i];
-      segment.style.transform = `rotate(${i * 30}deg) skewY(-60deg)`;
+  const colors = [
+    "#fbc4ab", "#fcd5ce", "#fae1dd", "#f8edeb", "#e8e8e4", "#d8e2dc",
+    "#ece4db", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff"
+  ];
 
-      const label = document.createElement("div");
-      label.className = "label";
-      label.textContent = zodiac[i];
-      label.style.transform = `rotate(30deg)`;
+  const wheel = document.getElementById("wheel");
+  const radius = 200;
+  const center = radius;
+  const segmentAngle = 360 / zodiac.length;
 
-      segment.appendChild(label);
-      wheel.appendChild(segment);
+  function describeArc(x, y, radius, startAngle, endAngle) {
+    function polarToCartesian(cx, cy, r, angle) {
+      const rad = (angle - 90) * Math.PI / 180.0;
+      return {
+        x: cx + (r * Math.cos(rad)),
+        y: cy + (r * Math.sin(rad))
+      };
     }
 
-    let deg = 0;
-    document.getElementById("spinBtn").addEventListener("click", () => {
-      const randomDeg = Math.floor(Math.random() * 360) + 3600;
-      deg += randomDeg;
-      wheel.style.transform = `rotate(${deg}deg)`;
+    const start = polarToCartesian(x, y, radius, endAngle);
+    const end = polarToCartesian(x, y, radius, startAngle);
 
-      setTimeout(() => {
-        const normalizedDeg = deg % 360;
-        const index = Math.floor(((360 - normalizedDeg + 15) % 360) / 30);
-        document.getElementById("result").textContent = `🎯 抽中了：${zodiac[index]}！`;
-      }, 4200);
-    });
-  </script>
+    const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+    const d = [
+      `M ${x} ${y}`,
+      `L ${start.x} ${start.y}`,
+      `A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+      "Z"
+    ].join(" ");
+
+    return d;
+  }
+
+  zodiac.forEach((name, i) => {
+    const startAngle = i * segmentAngle;
+    const endAngle = startAngle + segmentAngle;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", describeArc(center, center, radius, startAngle, endAngle));
+    path.setAttribute("fill", colors[i]);
+    path.setAttribute("stroke", "#fff");
+    path.setAttribute("stroke-width", "2");
+    wheel.appendChild(path);
+
+    const textAngle = startAngle + segmentAngle / 2;
+    const rad = (textAngle - 90) * Math.PI / 180;
+    const textX = center + Math.cos(rad) * radius * 0.7;
+    const textY = center + Math.sin(rad) * radius * 0.7;
+
+    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("x", textX);
+    text.setAttribute("y", textY);
+    text.setAttribute("text-anchor", "middle");
+    text.setAttribute("dominant-baseline", "middle");
+    text.textContent = name;
+    wheel.appendChild(text);
+  });
+
+  let deg = 0;
+  const spinBtn = document.getElementById("spinBtn");
+  const result = document.getElementById("result");
+
+  spinBtn.addEventListener("click", () => {
+    spinBtn.disabled = true;
+    result.textContent = "";
+    const spins = Math.floor(Math.random() * 360) + 3600;
+    deg += spins;
+    wheel.style.transition = "transform 4s cubic-bezier(0.33, 1, 0.68, 1)";
+    wheel.style.transform = `rotate(${deg}deg)`;
+
+    setTimeout(() => {
+      spinBtn.disabled = false;
+      const normalizedDeg = deg % 360;
+      const index = Math.floor(((360 - normalizedDeg + segmentAngle / 2) % 360) / segmentAngle);
+      result.textContent = `🎯 抽中了：${zodiac[index]}！`;
+    }, 4200);
+  });
+</script>
+
 </body>
 </html>
